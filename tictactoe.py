@@ -79,26 +79,89 @@ def winner(board):
     """
     Returns the winner of the game, if there is one.
     """
-    
-    raise NotImplementedError
+    # Check rows
+    for i in range(3):
+        if board[i][0] == board[i][1] == board[i][2]:
+            return board[i][0]
+    # check columnss
+    for j in range(3):
+        if board[0][j] == board[1][j] == board[2][j]:
+            return board[0][j]
+    # check diagonals
+    if board[0][0] == board[1][1] == board[2][2]:
+        return board[0][0]    
+    elif board[2][0] == board[1][1] == board[0][2]:
+        return board[2][0]
+    else:
+        return None
 
 
 def terminal(board):
     """
     Returns True if game is over, False otherwise.
     """
-    raise NotImplementedError
+    if winner(board) == X or winner(board) == O or actions(board) == 0:
+        return True
+    else: 
+        return False
 
 
 def utility(board):
     """
     Returns 1 if X has won the game, -1 if O has won, 0 otherwise.
     """
-    raise NotImplementedError
-
+    if (winner(board)) == X:
+        return 1
+    elif (winner(board)) == O:
+        return -1
+    else:
+        return 0
 
 def minimax(board):
     """
     Returns the optimal action for the current player on the board.
     """
-    raise NotImplementedError
+    if terminal(board):
+        return None
+    
+    else:
+        best_move = None
+        if player(board) == X:
+            value, best_move = maxvalue(board)
+        else: 
+            value, best_move = minvalue(board)
+        return best_move
+
+def maxvalue(board): # based on pseudo code
+    """
+    Returns the max value and best move of maximising player
+    """
+    v = float("-inf")
+    move = None
+    if terminal(board):
+        return utility(board)
+    for action in actions(board):
+        outcome_value, act = minvalue(result(board,action))
+        if outcome_value > v:
+            v = outcome_value
+            move = action
+            if v == 1:
+                return v, move
+    return v, move
+
+def minvalue(board): # based on pseudo code
+    """
+    Returns the min value and best move of minimizing player
+    """
+    v = float("-inf")
+    move = None
+    if terminal(board):
+        return utility(board)
+    for action in actions(board):
+        outcome_value, act = maxvalue(result(board,action))
+        if outcome_value < v:
+            v = outcome_value
+            move = action
+            if v == 1:
+                return v, move
+    return v, move
